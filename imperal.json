@@ -1,0 +1,6875 @@
+{
+  "manifest_schema_version": 3,
+  "sdk_version": "5.9.22",
+  "app_id": "salesforce-connector",
+  "version": "0.1.0",
+  "name": "Salesforce",
+  "description": "Connect your own Salesforce organization to manage CRM data from Imperal -- Accounts, Contacts, Leads, Opportunities, Cases, Tasks/Events, Campaigns, and any custom object via generic record tools. Run SOQL/SOSL queries and composite/batch requests, bulk-import or bulk-update via Bulk API 2.0, post to Chatter and attach files, read Reports & Dashboards, drive Approval Processes, send email, publish Platform Events, and audit your org (pipeline snapshot, stale opportunities, org health). Uses your own Salesforce Connected App (OAuth 2.0 Client Credentials Flow) -- nothing is hosted or proxied by Imperal beyond the request itself. Note: this manages CRM data and declarative processes only; Metadata API deployments, Apex development (Tooling API), and real-time Streaming/Pub-Sub subscriptions are out of scope.",
+  "icon": "icon.svg",
+  "actions_explicit": true,
+  "system": false,
+  "capabilities": [
+    "salesforce:read",
+    "salesforce:write"
+  ],
+  "tools": [
+    {
+      "name": "connect_salesforce",
+      "description": "Connect a Salesforce organization by saving its Connected App credentials (Consumer Key/Secret + My Domain host) for the OAuth 2.0 Client Credentials Flow, after checking they actually work. You'll need a Connected App with Client Credentials Flow enabled and a 'Run As' integration user configured (Setup > App Manager > New Connected App).",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.provider.connected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "client_id": {
+            "default": "",
+            "description": "Consumer Key of the Salesforce Connected App (Setup > App Manager > your app > View > Consumer Key).",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "client_secret": {
+            "default": "",
+            "description": "Consumer Secret of the Salesforce Connected App.",
+            "title": "Client Secret",
+            "type": "string"
+          },
+          "my_domain": {
+            "default": "",
+            "description": "Your org's My Domain hostname, e.g. 'mycompany.my.salesforce.com' (Setup > My Domain). Do not include https://.",
+            "title": "My Domain",
+            "type": "string"
+          },
+          "label": {
+            "default": "",
+            "description": "Optional friendly name for this organization connection.",
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "title": "ConnectSalesforceParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "connected": {
+            "default": false,
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          },
+          "my_domain": {
+            "default": "",
+            "title": "My Domain",
+            "type": "string"
+          }
+        },
+        "title": "ProviderConnection",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.connect_salesforce",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_connections",
+      "description": "List the connected Salesforce organizations.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "description": "Explicit empty params model -- V17 disallows untyped handlers.",
+        "properties": {},
+        "title": "NoParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ProviderConnection": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "connected": {
+                "default": false,
+                "title": "Connected",
+                "type": "boolean"
+              },
+              "detail": {
+                "default": "",
+                "title": "Detail",
+                "type": "string"
+              },
+              "my_domain": {
+                "default": "",
+                "title": "My Domain",
+                "type": "string"
+              }
+            },
+            "title": "ProviderConnection",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ProviderConnection"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ProviderConnectionList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_connections",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "create_record",
+      "description": "Create a new record of any Salesforce sObject type -- standard (Account, Contact, Lead, Opportunity, Case, Task, Event, Campaign, User...) or custom (any __c object). The REST API is generic across every object, so this one tool covers all of them.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.record.created"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name, e.g. 'Account', 'Contact', 'Lead', 'MyCustom__c'.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "description": "Field API name -> value pairs to set on the new record.",
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "object_type"
+        ],
+        "title": "CreateRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "RecordResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.create_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "get_record",
+      "description": "Read one record of any Salesforce sObject type by Id, optionally limited to specific fields.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name, e.g. 'Account'.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "record_id": {
+            "description": "18-character Salesforce record Id.",
+            "title": "Record Id",
+            "type": "string"
+          },
+          "fields": {
+            "default": "",
+            "description": "Optional comma-separated list of field API names to return; empty returns all fields.",
+            "title": "Fields",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type",
+          "record_id"
+        ],
+        "title": "GetRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "record_id": {
+            "default": "",
+            "title": "Record Id",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "RecordDetail",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.get_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "update_record",
+      "description": "Update selected fields on an existing record of any Salesforce sObject type. Only given fields change.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.record.updated"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name, e.g. 'Opportunity'.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "record_id": {
+            "description": "18-character Salesforce record Id.",
+            "title": "Record Id",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "description": "Field API name -> new value pairs to update.",
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "object_type",
+          "record_id",
+          "fields"
+        ],
+        "title": "UpdateRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "RecordResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.update_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "upsert_record",
+      "description": "Create or update a record by matching an External ID field instead of the Salesforce record Id -- the standard way to sync from an external system without tracking Salesforce Ids yourself.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.record.upserted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name, e.g. 'Contact'.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "external_id_field": {
+            "description": "API name of the External ID field used to match an existing record.",
+            "title": "External Id Field",
+            "type": "string"
+          },
+          "external_id_value": {
+            "description": "Value of the external id to match/create by.",
+            "title": "External Id Value",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "description": "Field API name -> value pairs to set.",
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "object_type",
+          "external_id_field",
+          "external_id_value"
+        ],
+        "title": "UpsertRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "RecordResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.upsert_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "delete_record",
+      "description": "Permanently delete one record of any Salesforce sObject type by Id. Salesforce keeps it recoverable in the Recycle Bin for 15 days.",
+      "action_type": "destructive",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.record.deleted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name, e.g. 'Task'.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "record_id": {
+            "description": "18-character Salesforce record Id.",
+            "title": "Record Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type",
+          "record_id"
+        ],
+        "title": "DeleteRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.delete_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "describe_object",
+      "description": "Read the field-level metadata (schema) of a Salesforce sObject type -- every field's API name, label, type, and whether it's required/updateable/a picklist. Use this to discover what fields exist on a standard or custom object.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name to describe, e.g. 'Account'.",
+            "title": "Object Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type"
+        ],
+        "title": "DescribeObjectParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ObjectFieldMeta": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "name": {
+                "default": "",
+                "title": "Name",
+                "type": "string"
+              },
+              "label": {
+                "default": "",
+                "title": "Label",
+                "type": "string"
+              },
+              "type": {
+                "default": "",
+                "title": "Type",
+                "type": "string"
+              },
+              "required": {
+                "default": false,
+                "title": "Required",
+                "type": "boolean"
+              },
+              "updateable": {
+                "default": true,
+                "title": "Updateable",
+                "type": "boolean"
+              },
+              "picklist_values": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Picklist Values",
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "ObjectFieldMeta",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          },
+          "custom": {
+            "default": false,
+            "title": "Custom",
+            "type": "boolean"
+          },
+          "createable": {
+            "default": true,
+            "title": "Createable",
+            "type": "boolean"
+          },
+          "updateable": {
+            "default": true,
+            "title": "Updateable",
+            "type": "boolean"
+          },
+          "deletable": {
+            "default": true,
+            "title": "Deletable",
+            "type": "boolean"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/$defs/ObjectFieldMeta"
+            },
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ObjectDescribe",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.describe_object",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_objects",
+      "description": "List every sObject type available in this org -- standard objects and custom (__c) objects alike.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "ListObjectsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "SObjectSummary": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "name": {
+                "default": "",
+                "title": "Name",
+                "type": "string"
+              },
+              "label": {
+                "default": "",
+                "title": "Label",
+                "type": "string"
+              },
+              "custom": {
+                "default": false,
+                "title": "Custom",
+                "type": "boolean"
+              },
+              "queryable": {
+                "default": true,
+                "title": "Queryable",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "SObjectSummary",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/SObjectSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "SObjectSummaryList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_objects",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "run_soql",
+      "description": "Run a SOQL query against Salesforce records, e.g. \"SELECT Id, Name FROM Account WHERE Industry = 'Technology'\". Returns up to 2000 rows plus a next_records_url to page through more with continue_soql.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "query": {
+            "description": "A SOQL query, e.g. \"SELECT Id, Name FROM Account WHERE Industry = 'Technology'\".",
+            "title": "Query",
+            "type": "string"
+          },
+          "include_deleted": {
+            "default": false,
+            "description": "Use queryAll to also include soft-deleted/archived records.",
+            "title": "Include Deleted",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "RunSoqlParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "SoqlRow": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "fields": {
+                "additionalProperties": true,
+                "title": "Fields",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "SoqlRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "total_size": {
+            "default": 0,
+            "title": "Total Size",
+            "type": "integer"
+          },
+          "done": {
+            "default": true,
+            "title": "Done",
+            "type": "boolean"
+          },
+          "next_records_url": {
+            "default": "",
+            "title": "Next Records Url",
+            "type": "string"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/$defs/SoqlRow"
+            },
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "SoqlResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.run_soql",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "continue_soql",
+      "description": "Fetch the next page of a large SOQL result set, using the next_records_url returned by run_soql/continue_soql.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "next_records_url": {
+            "description": "The nextRecordsUrl returned by a previous run_soql/continue_soql call, for paginating large result sets.",
+            "title": "Next Records Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "next_records_url"
+        ],
+        "title": "ContinueSoqlParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "SoqlRow": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "fields": {
+                "additionalProperties": true,
+                "title": "Fields",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "SoqlRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "total_size": {
+            "default": 0,
+            "title": "Total Size",
+            "type": "integer"
+          },
+          "done": {
+            "default": true,
+            "title": "Done",
+            "type": "boolean"
+          },
+          "next_records_url": {
+            "default": "",
+            "title": "Next Records Url",
+            "type": "string"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/$defs/SoqlRow"
+            },
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "SoqlResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.continue_soql",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "run_sosl",
+      "description": "Run a SOSL full-text search across multiple sObject types at once, e.g. \"FIND {Acme} IN ALL FIELDS RETURNING Account(Id, Name), Contact(Id, Name)\".",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "search": {
+            "description": "A SOSL search string, e.g. \"FIND {Acme} IN ALL FIELDS RETURNING Account(Id, Name), Contact(Id, Name)\".",
+            "title": "Search",
+            "type": "string"
+          }
+        },
+        "required": [
+          "search"
+        ],
+        "title": "RunSoslParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "SoqlRow": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "fields": {
+                "additionalProperties": true,
+                "title": "Fields",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "SoqlRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/$defs/SoqlRow"
+            },
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "SoslResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.run_sosl",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "run_composite",
+      "description": "Run up to 25 different sObject operations in ONE atomic-or-not HTTP request -- Salesforce's own native batching, not a wrapper. Each sub-request has a reference_id so later sub-requests in the same call can reference its result.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.composite.executed"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "$defs": {
+          "CompositeSubRequest": {
+            "properties": {
+              "method": {
+                "description": "HTTP method for this sub-request: GET, POST, PATCH, or DELETE.",
+                "title": "Method",
+                "type": "string"
+              },
+              "url": {
+                "description": "Relative REST URL for this sub-request, e.g. '/services/data/v62.0/sobjects/Account'.",
+                "title": "Url",
+                "type": "string"
+              },
+              "reference_id": {
+                "description": "A label for this sub-request so later sub-requests can reference its result.",
+                "title": "Reference Id",
+                "type": "string"
+              },
+              "body": {
+                "additionalProperties": true,
+                "description": "Request body for POST/PATCH sub-requests.",
+                "title": "Body",
+                "type": "object"
+              }
+            },
+            "required": [
+              "method",
+              "url",
+              "reference_id"
+            ],
+            "title": "CompositeSubRequest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "requests": {
+            "description": "Up to 25 sub-requests to run as one atomic-or-not composite call.",
+            "items": {
+              "$ref": "#/$defs/CompositeSubRequest"
+            },
+            "title": "Requests",
+            "type": "array"
+          },
+          "all_or_none": {
+            "default": false,
+            "description": "If true, all sub-requests roll back together if any one fails.",
+            "title": "All Or None",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "requests"
+        ],
+        "title": "RunCompositeParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "CompositeSubResult": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "reference_id": {
+                "default": "",
+                "title": "Reference Id",
+                "type": "string"
+              },
+              "http_status": {
+                "default": 0,
+                "title": "Http Status",
+                "type": "integer"
+              },
+              "body": {
+                "additionalProperties": true,
+                "title": "Body",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "CompositeSubResult",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/$defs/CompositeSubResult"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "CompositeResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.run_composite",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "create_bulk_job",
+      "description": "Start a Bulk API 2.0 job for mass insert/update/upsert/delete/hardDelete/query/queryAll -- for volumes too large for single record calls or run_soql's 2000-row page (Bulk API 2.0 handles up to 150 million records per job). For insert/update/upsert/delete, pass csv_data (header row + data rows); for query/queryAll, pass a SOQL query instead.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.bulk_job.created"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name the job operates on, e.g. 'Lead'.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "operation": {
+            "description": "One of: insert, update, upsert, delete, hardDelete, query, queryAll.",
+            "title": "Operation",
+            "type": "string"
+          },
+          "external_id_field": {
+            "default": "",
+            "description": "Required only for operation='upsert' -- the External ID field API name.",
+            "title": "External Id Field",
+            "type": "string"
+          },
+          "csv_data": {
+            "default": "",
+            "description": "CSV content (header row + data rows) for insert/update/upsert/delete jobs. Not used for query/queryAll (use 'query' instead).",
+            "title": "Csv Data",
+            "type": "string"
+          },
+          "query": {
+            "default": "",
+            "description": "SOQL query text, required only for operation='query'/'queryAll'.",
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "object_type",
+          "operation"
+        ],
+        "title": "CreateBulkJobParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "job_id": {
+            "default": "",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "operation": {
+            "default": "",
+            "title": "Operation",
+            "type": "string"
+          },
+          "state": {
+            "default": "",
+            "title": "State",
+            "type": "string"
+          },
+          "created_date": {
+            "default": "",
+            "title": "Created Date",
+            "type": "string"
+          },
+          "records_processed": {
+            "default": 0,
+            "title": "Records Processed",
+            "type": "integer"
+          },
+          "records_failed": {
+            "default": 0,
+            "title": "Records Failed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "BulkJob",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.create_bulk_job",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "get_bulk_job",
+      "description": "Check the status of a Bulk API 2.0 job -- state, records processed, records failed.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "job_id": {
+            "description": "Bulk API 2.0 job id from create_bulk_job.",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "query_job": {
+            "default": false,
+            "description": "True if this is a query/queryAll job (different endpoint family than ingest jobs).",
+            "title": "Query Job",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "title": "GetBulkJobParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "job_id": {
+            "default": "",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "object_type": {
+            "default": "",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "operation": {
+            "default": "",
+            "title": "Operation",
+            "type": "string"
+          },
+          "state": {
+            "default": "",
+            "title": "State",
+            "type": "string"
+          },
+          "created_date": {
+            "default": "",
+            "title": "Created Date",
+            "type": "string"
+          },
+          "records_processed": {
+            "default": 0,
+            "title": "Records Processed",
+            "type": "integer"
+          },
+          "records_failed": {
+            "default": 0,
+            "title": "Records Failed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "BulkJob",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.get_bulk_job",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_bulk_jobs",
+      "description": "List recent Bulk API 2.0 jobs in this org, most recent first.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "job_type": {
+            "default": "ingest",
+            "description": "'ingest' for insert/update/upsert/delete jobs, or 'query' for query/queryAll jobs.",
+            "title": "Job Type",
+            "type": "string"
+          }
+        },
+        "title": "ListBulkJobsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkJob": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "job_id": {
+                "default": "",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "object_type": {
+                "default": "",
+                "title": "Object Type",
+                "type": "string"
+              },
+              "operation": {
+                "default": "",
+                "title": "Operation",
+                "type": "string"
+              },
+              "state": {
+                "default": "",
+                "title": "State",
+                "type": "string"
+              },
+              "created_date": {
+                "default": "",
+                "title": "Created Date",
+                "type": "string"
+              },
+              "records_processed": {
+                "default": 0,
+                "title": "Records Processed",
+                "type": "integer"
+              },
+              "records_failed": {
+                "default": 0,
+                "title": "Records Failed",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "BulkJob",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/BulkJob"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "BulkJobList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_bulk_jobs",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "get_bulk_job_results",
+      "description": "Read the CSV results of a completed Bulk API 2.0 job -- successful records, failed records, unprocessed records, or the query rows for a query/queryAll job.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "job_id": {
+            "description": "Bulk API 2.0 job id.",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "result_type": {
+            "default": "successfulResults",
+            "description": "One of: successfulResults, failedResults, unprocessedrecords (ingest jobs), or 'results' for query jobs.",
+            "title": "Result Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "title": "BulkJobResultsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "job_id": {
+            "default": "",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "result_type": {
+            "default": "",
+            "title": "Result Type",
+            "type": "string"
+          },
+          "csv_data": {
+            "default": "",
+            "title": "Csv Data",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "BulkJobResults",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.get_bulk_job_results",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "abort_bulk_job",
+      "description": "Abort a Bulk API 2.0 job that is still open or in progress.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.bulk_job.aborted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "job_id": {
+            "description": "Bulk API 2.0 job id to abort.",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "query_job": {
+            "default": false,
+            "description": "True if this is a query/queryAll job.",
+            "title": "Query Job",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "job_id"
+        ],
+        "title": "AbortBulkJobParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.abort_bulk_job",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "convert_lead",
+      "description": "Convert a Lead into an Account, Contact, and (optionally) an Opportunity -- Salesforce's own dedicated conversion process, not a plain field update. Requires the org's actual 'Converted' Lead Status picklist value.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.lead.converted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "lead_id": {
+            "description": "Id of the Lead to convert.",
+            "title": "Lead Id",
+            "type": "string"
+          },
+          "converted_status": {
+            "description": "The Lead Status picklist value that represents 'Converted' in this org.",
+            "title": "Converted Status",
+            "type": "string"
+          },
+          "create_opportunity": {
+            "default": true,
+            "description": "Whether to also create an Opportunity from this lead.",
+            "title": "Create Opportunity",
+            "type": "boolean"
+          },
+          "opportunity_name": {
+            "default": "",
+            "description": "Name for the new Opportunity, if create_opportunity is true.",
+            "title": "Opportunity Name",
+            "type": "string"
+          },
+          "account_id": {
+            "default": "",
+            "description": "Existing Account Id to attach this conversion to, instead of creating a new Account.",
+            "title": "Account Id",
+            "type": "string"
+          },
+          "contact_id": {
+            "default": "",
+            "description": "Existing Contact Id to attach this conversion to, instead of creating a new Contact.",
+            "title": "Contact Id",
+            "type": "string"
+          },
+          "do_not_create_opportunity": {
+            "default": false,
+            "description": "Deprecated alias kept for clarity -- prefer create_opportunity=false.",
+            "title": "Do Not Create Opportunity",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "lead_id",
+          "converted_status"
+        ],
+        "title": "ConvertLeadParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "lead_id": {
+            "default": "",
+            "title": "Lead Id",
+            "type": "string"
+          },
+          "account_id": {
+            "default": "",
+            "title": "Account Id",
+            "type": "string"
+          },
+          "contact_id": {
+            "default": "",
+            "title": "Contact Id",
+            "type": "string"
+          },
+          "opportunity_id": {
+            "default": "",
+            "title": "Opportunity Id",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "LeadConvertResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.convert_lead",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "post_chatter_feed",
+      "description": "Post a new Chatter feed item (a comment/update) on any record -- the collaboration layer Salesforce users see on a record's page.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.chatter.posted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "subject_id": {
+            "description": "Id of the record (or 'me') this feed post is attached to.",
+            "title": "Subject Id",
+            "type": "string"
+          },
+          "text": {
+            "description": "Plain text body of the feed post.",
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject_id",
+          "text"
+        ],
+        "title": "PostChatterFeedParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "body": {
+            "default": "",
+            "title": "Body",
+            "type": "string"
+          },
+          "created_date": {
+            "default": "",
+            "title": "Created Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "title": "FeedPostResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.post_chatter_feed",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_chatter_feed",
+      "description": "Read the Chatter feed (comments/updates) posted on one record.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "subject_id": {
+            "description": "Id of the record (or 'me') to read the feed for.",
+            "title": "Subject Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject_id"
+        ],
+        "title": "ListChatterFeedParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "FeedItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "actor_name": {
+                "default": "",
+                "title": "Actor Name",
+                "type": "string"
+              },
+              "body": {
+                "default": "",
+                "title": "Body",
+                "type": "string"
+              },
+              "created_date": {
+                "default": "",
+                "title": "Created Date",
+                "type": "string"
+              },
+              "comment_count": {
+                "default": 0,
+                "title": "Comment Count",
+                "type": "integer"
+              },
+              "like_count": {
+                "default": 0,
+                "title": "Like Count",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "title": "FeedItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/FeedItem"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ChatterFeedList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_chatter_feed",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "comment_on_feed",
+      "description": "Add a comment to an existing Chatter feed item.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.chatter.commented"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "feed_item_id": {
+            "description": "Id of the feed item (post) to comment on.",
+            "title": "Feed Item Id",
+            "type": "string"
+          },
+          "text": {
+            "description": "Plain text body of the comment.",
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "feed_item_id",
+          "text"
+        ],
+        "title": "CommentOnFeedParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.comment_on_feed",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_record_files",
+      "description": "List files (ContentDocuments) attached to a record via the Files related list.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "record_id": {
+            "description": "Id of the record whose attached files to list.",
+            "title": "Record Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "record_id"
+        ],
+        "title": "ListRecordFilesParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "RecordFile": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "content_document_id": {
+                "default": "",
+                "title": "Content Document Id",
+                "type": "string"
+              },
+              "file_type": {
+                "default": "",
+                "title": "File Type",
+                "type": "string"
+              },
+              "content_size": {
+                "default": 0,
+                "title": "Content Size",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "RecordFile",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/RecordFile"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "RecordFileList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_record_files",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "upload_file",
+      "description": "Upload a file and attach it to a record -- creates a ContentVersion and links it via ContentDocumentLink.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.file.uploaded"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "title": {
+            "description": "File title/name shown in Salesforce Files.",
+            "title": "Title",
+            "type": "string"
+          },
+          "base64_data": {
+            "description": "Raw file content, base64-encoded.",
+            "title": "Base64 Data",
+            "type": "string"
+          },
+          "path_on_client": {
+            "description": "Filename with extension, e.g. 'quote.pdf' -- determines the file type icon.",
+            "title": "Path On Client",
+            "type": "string"
+          },
+          "record_id": {
+            "default": "",
+            "description": "Optional record Id to attach this file to immediately after upload.",
+            "title": "Record Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "base64_data",
+          "path_on_client"
+        ],
+        "title": "UploadFileParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "content_document_id": {
+            "default": "",
+            "title": "Content Document Id",
+            "type": "string"
+          },
+          "content_version_id": {
+            "default": "",
+            "title": "Content Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "FileUploadResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.upload_file",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_reports",
+      "description": "List Salesforce reports available to run.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "ListReportsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ReportSummary": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "name": {
+                "default": "",
+                "title": "Name",
+                "type": "string"
+              },
+              "folder_name": {
+                "default": "",
+                "title": "Folder Name",
+                "type": "string"
+              },
+              "format": {
+                "default": "",
+                "title": "Format",
+                "type": "string"
+              }
+            },
+            "required": [
+              "title"
+            ],
+            "title": "ReportSummary",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ReportSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ReportList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_reports",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "run_report",
+      "description": "Run a Salesforce report by Id and return its summarized result rows.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "report_id": {
+            "description": "Id of the report to run, from list_reports.",
+            "title": "Report Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id"
+        ],
+        "title": "RunReportParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ReportRow": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "label": {
+                "default": "",
+                "title": "Label",
+                "type": "string"
+              },
+              "values": {
+                "additionalProperties": true,
+                "title": "Values",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "ReportRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "report_id": {
+            "default": "",
+            "title": "Report Id",
+            "type": "string"
+          },
+          "report_name": {
+            "default": "",
+            "title": "Report Name",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/$defs/ReportRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "grand_total": {
+            "default": "",
+            "title": "Grand Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ReportResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.run_report",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_dashboards",
+      "description": "List Salesforce dashboards.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "ListDashboardsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "DashboardSummary": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "folder_name": {
+                "default": "",
+                "title": "Folder Name",
+                "type": "string"
+              }
+            },
+            "title": "DashboardSummary",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/DashboardSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DashboardList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_dashboards",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "get_dashboard",
+      "description": "Read one dashboard's components/values by Id.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "dashboard_id": {
+            "description": "Id of the dashboard to read, from list_dashboards.",
+            "title": "Dashboard Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dashboard_id"
+        ],
+        "title": "GetDashboardParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "DashboardComponent": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "value": {
+                "default": "",
+                "title": "Value",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "title": "DashboardComponent",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "dashboard_id": {
+            "default": "",
+            "title": "Dashboard Id",
+            "type": "string"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/$defs/DashboardComponent"
+            },
+            "title": "Components",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "DashboardDetail",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.get_dashboard",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "submit_for_approval",
+      "description": "Submit a record into its assigned Approval Process (e.g. a big discount Opportunity, or an Expense Report over a threshold).",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.approval.submitted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "record_id": {
+            "description": "Id of the record to submit for approval.",
+            "title": "Record Id",
+            "type": "string"
+          },
+          "comments": {
+            "default": "",
+            "description": "Optional comments to attach to the approval submission.",
+            "title": "Comments",
+            "type": "string"
+          },
+          "process_name": {
+            "default": "",
+            "description": "Optional specific approval process API name; omitted lets Salesforce pick the applicable one.",
+            "title": "Process Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "record_id"
+        ],
+        "title": "SubmitForApprovalParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "record_id": {
+            "default": "",
+            "title": "Record Id",
+            "type": "string"
+          },
+          "instance_id": {
+            "default": "",
+            "title": "Instance Id",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ApprovalActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.submit_for_approval",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "process_approval",
+      "description": "Approve, reject, or remove a pending approval work item -- acting on behalf of the assigned approver.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.approval.processed"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "work_item_id": {
+            "description": "Id of the ProcessInstanceWorkitem to act on.",
+            "title": "Work Item Id",
+            "type": "string"
+          },
+          "action": {
+            "description": "'Approve' or 'Reject'.",
+            "title": "Action",
+            "type": "string"
+          },
+          "comments": {
+            "default": "",
+            "description": "Optional comments to attach to the decision.",
+            "title": "Comments",
+            "type": "string"
+          }
+        },
+        "required": [
+          "work_item_id",
+          "action"
+        ],
+        "title": "ProcessApprovalParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "record_id": {
+            "default": "",
+            "title": "Record Id",
+            "type": "string"
+          },
+          "instance_id": {
+            "default": "",
+            "title": "Instance Id",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ApprovalActionResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.process_approval",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "list_approval_work_items",
+      "description": "List pending approval work items across the org (records currently awaiting a decision).",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "record_id": {
+            "default": "",
+            "description": "Optional record Id to filter pending approval work items to just that record.",
+            "title": "Record Id",
+            "type": "string"
+          }
+        },
+        "title": "ListApprovalsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ApprovalWorkItem": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "work_item_id": {
+                "default": "",
+                "title": "Work Item Id",
+                "type": "string"
+              },
+              "record_id": {
+                "default": "",
+                "title": "Record Id",
+                "type": "string"
+              },
+              "record_name": {
+                "default": "",
+                "title": "Record Name",
+                "type": "string"
+              },
+              "process_name": {
+                "default": "",
+                "title": "Process Name",
+                "type": "string"
+              },
+              "assigned_to": {
+                "default": "",
+                "title": "Assigned To",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "ApprovalWorkItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ApprovalWorkItem"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "ApprovalWorkItemList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.list_approval_work_items",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "send_email",
+      "description": "Send a transactional email through Salesforce (using the org's own send-email capability), optionally logging it against a related record.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.email.sent"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "to_addresses": {
+            "description": "Recipient email addresses.",
+            "items": {
+              "type": "string"
+            },
+            "title": "To Addresses",
+            "type": "array"
+          },
+          "subject": {
+            "description": "Email subject line.",
+            "title": "Subject",
+            "type": "string"
+          },
+          "body": {
+            "description": "Plain-text email body.",
+            "title": "Body",
+            "type": "string"
+          },
+          "related_record_id": {
+            "default": "",
+            "description": "Optional record Id (e.g. a Contact or Case) to log this email against.",
+            "title": "Related Record Id",
+            "type": "string"
+          },
+          "save_as_activity": {
+            "default": true,
+            "description": "Whether to log this send as an Activity/Task on the related record.",
+            "title": "Save As Activity",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "to_addresses",
+          "subject",
+          "body"
+        ],
+        "title": "SendEmailParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "SendEmailResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.send_email",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "get_org_limits",
+      "description": "Read the org's current API/storage/feature limits and how much of each has been used -- e.g. daily API request budget remaining.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "GetOrgLimitsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "OrgLimit": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "name": {
+                "default": "",
+                "title": "Name",
+                "type": "string"
+              },
+              "max": {
+                "default": 0,
+                "title": "Max",
+                "type": "integer"
+              },
+              "remaining": {
+                "default": 0,
+                "title": "Remaining",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "OrgLimit",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "limits": {
+            "items": {
+              "$ref": "#/$defs/OrgLimit"
+            },
+            "title": "Limits",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "OrgLimitsResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.get_org_limits",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "publish_platform_event",
+      "description": "Publish a custom Platform Event -- Salesforce's own pub/sub messaging mechanism for notifying other systems/Flows/Apex triggers in near real time.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.platform_event.published"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "event_type": {
+            "description": "API name of the Platform Event, e.g. 'Order_Placed__e'.",
+            "title": "Event Type",
+            "type": "string"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "description": "Custom field API name -> value pairs for this event.",
+            "title": "Fields",
+            "type": "object"
+          }
+        },
+        "required": [
+          "event_type"
+        ],
+        "title": "PublishPlatformEventParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "event_type": {
+            "default": "",
+            "title": "Event Type",
+            "type": "string"
+          },
+          "success": {
+            "default": true,
+            "title": "Success",
+            "type": "boolean"
+          },
+          "replay_id": {
+            "default": "",
+            "title": "Replay Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "PlatformEventResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.publish_platform_event",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "bulk_update_records",
+      "description": "Update the same fields on up to 200 explicit records of one object type in a single call -- for routine batch fixes too small for a Bulk API 2.0 job.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.record.updated"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name shared by every record id.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "record_ids": {
+            "description": "Explicit record Ids; 1-200, never inferred.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object_type",
+          "record_ids"
+        ],
+        "title": "BulkRecordIdsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkRecordResultItem": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "record_id": {
+                "default": "",
+                "title": "Record Id",
+                "type": "string"
+              },
+              "success": {
+                "default": true,
+                "title": "Success",
+                "type": "boolean"
+              },
+              "error": {
+                "default": "",
+                "title": "Error",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "BulkRecordResultItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/$defs/BulkRecordResultItem"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "BulkRecordResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.bulk_update_records",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "bulk_delete_records",
+      "description": "Delete up to 200 explicit records of one object type in a single call -- for routine batch cleanup too small for a Bulk API 2.0 job.",
+      "action_type": "destructive",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.record.deleted"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "object_type": {
+            "description": "sObject API name shared by every record id.",
+            "title": "Object Type",
+            "type": "string"
+          },
+          "record_ids": {
+            "description": "Explicit record Ids; 1-200, never inferred.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Record Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "object_type",
+          "record_ids"
+        ],
+        "title": "BulkRecordIdsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BulkRecordResultItem": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "record_id": {
+                "default": "",
+                "title": "Record Id",
+                "type": "string"
+              },
+              "success": {
+                "default": true,
+                "title": "Success",
+                "type": "boolean"
+              },
+              "error": {
+                "default": "",
+                "title": "Error",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "BulkRecordResultItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/$defs/BulkRecordResultItem"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "BulkRecordResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.bulk_delete_records",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "audit_org",
+      "description": "Build an aggregated org health snapshot: API usage limits plus headline record counts (Account/Contact/Lead/Opportunity/Case) -- same value-add shape as MuleSoft/UiPath/Automation Anywhere/Blue Prism's estate audits.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Connection id; omitted uses the only/default connection.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "AuditOrgParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "OrgAuditRow": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "check": {
+                "default": "",
+                "title": "Check",
+                "type": "string"
+              },
+              "detail": {
+                "default": "",
+                "title": "Detail",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "OrgAuditRow",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "generated_at": {
+            "default": "",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/$defs/OrgAuditRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "OrgAuditReport",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.audit_org",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    },
+    {
+      "name": "disconnect_salesforce",
+      "description": "Disconnect one Salesforce organization. Nothing in Salesforce itself is changed; only the saved credentials here are deleted.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "salesforce.provider.disconnected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "description": "Connection id from list_connections.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection_id"
+        ],
+        "title": "DisconnectSalesforceParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "ok": {
+            "default": true,
+            "title": "Ok",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "salesforce-connector.disconnect_salesforce",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "salesforce"
+    }
+  ],
+  "signals": [],
+  "schedules": [],
+  "required_scopes": [],
+  "icon_size_bytes": 560,
+  "lifecycle": {
+    "health_check": {
+      "interval_sec": 60
+    }
+  },
+  "secrets": [
+    {
+      "name": "salesforce_connections",
+      "description": "JSON array of connected Salesforce organizations: [{\"id\": \"...\", \"client_id\": \"...\", \"client_secret\": \"...\", \"my_domain\": \"mycompany.my.salesforce.com\", \"label\": \"...\"}]. Each entry is one Connected App (Client Credentials Flow, \"Run As\" integration user configured) for one Salesforce org. Managed by connect_salesforce/disconnect_salesforce.",
+      "required": false,
+      "write_mode": "both",
+      "max_bytes": 4096,
+      "scope": "user"
+    }
+  ],
+  "panels": [
+    {
+      "panel_id": "secrets",
+      "slot": "right",
+      "title": "Secrets",
+      "tree": {},
+      "icon": "KeyRound",
+      "refresh": "manual",
+      "center_overlay": false
+    },
+    {
+      "panel_id": "salesforce_connect",
+      "slot": "left",
+      "title": "Salesforce",
+      "tree": {},
+      "icon": "☁️",
+      "refresh": "manual",
+      "center_overlay": false,
+      "default_width": 320,
+      "min_width": 260,
+      "max_width": 420
+    },
+    {
+      "panel_id": "salesforce_connect_help",
+      "slot": "center",
+      "title": "How to connect Salesforce",
+      "tree": {},
+      "icon": "",
+      "refresh": "manual",
+      "center_overlay": true
+    },
+    {
+      "panel_id": "salesforce_center",
+      "slot": "center",
+      "title": "Salesforce",
+      "tree": {},
+      "icon": "☁️",
+      "refresh": "manual",
+      "center_overlay": true
+    },
+    {
+      "panel_id": "salesforce_settings",
+      "slot": "center",
+      "title": "",
+      "tree": {},
+      "icon": "",
+      "refresh": "manual",
+      "center_overlay": false
+    }
+  ]
+}
