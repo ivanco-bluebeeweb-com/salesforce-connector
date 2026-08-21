@@ -6837,7 +6837,7 @@
       "slot": "left",
       "title": "Salesforce",
       "tree": {},
-      "icon": "☁️",
+      "icon": "\u2601\ufe0f",
       "refresh": "manual",
       "center_overlay": false,
       "default_width": 320,
@@ -6858,7 +6858,7 @@
       "slot": "center",
       "title": "Salesforce",
       "tree": {},
-      "icon": "☁️",
+      "icon": "\u2601\ufe0f",
       "refresh": "manual",
       "center_overlay": true
     },
@@ -6871,5 +6871,56 @@
       "refresh": "manual",
       "center_overlay": false
     }
-  ]
+  ],
+  "pricing": {
+    "model": "per_action",
+    "currency": "tokens",
+    "monthly_price": 0,
+    "free_tools": [
+      "connect_salesforce",
+      "disconnect_salesforce",
+      "list_connections"
+    ],
+    "tool_prices": {
+      "connect_salesforce": 0,
+      "disconnect_salesforce": 0,
+      "list_connections": 0,
+      "create_record": 16,
+      "get_record": 8,
+      "update_record": 16,
+      "upsert_record": 16,
+      "delete_record": 16,
+      "describe_object": 8,
+      "list_objects": 8,
+      "run_soql": 8,
+      "continue_soql": 8,
+      "run_sosl": 8,
+      "run_composite": 20,
+      "create_bulk_job": 20,
+      "get_bulk_job": 8,
+      "list_bulk_jobs": 8,
+      "get_bulk_job_results": 8,
+      "abort_bulk_job": 16,
+      "convert_lead": 20,
+      "post_chatter_feed": 16,
+      "list_chatter_feed": 8,
+      "comment_on_feed": 16,
+      "list_record_files": 8,
+      "upload_file": 16,
+      "list_reports": 8,
+      "run_report": 8,
+      "list_dashboards": 8,
+      "get_dashboard": 8,
+      "submit_for_approval": 16,
+      "process_approval": 16,
+      "list_approval_work_items": 8,
+      "send_email": 16,
+      "get_org_limits": 8,
+      "publish_platform_event": 20,
+      "bulk_update_records": 60,
+      "bulk_delete_records": 60,
+      "audit_org": 40
+    },
+    "notes": "Fixed platform scale {0,8,16,20,40,60} per canonical PRICING_POLICY.md. Not a Google-backed app, no x1.8 markup."
+  }
 }
