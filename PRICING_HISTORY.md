@@ -1,5 +1,19 @@
 # Salesforce Connector — история цен
 
+## 2026-08-22 — повторное подтверждение цены (suspend → update_pricing → deploy → submit_for_review)
+
+Приложение было `live`, поэтому смена/подтверждение цены потребовало
+`suspend_app` перед `update_pricing` (платформенное требование: "pricing
+change under users mid-flight" запрещена без паузы). Первый вызов
+`update_pricing` вернул ошибку `'connect_salesforce' unexpectedly still
+priced; 'disconnect_salesforce' ...; 'list_connections' ...` — расхождение
+ТОЛЬКО по `free_tools` (0-цены), платные функции сохранились с первого
+раза. Немедленный повторный вызов с ИДЕНТИЧНЫМ payload прошёл без ошибки,
+цена подтверждена сохранённой. Задокументировано как отдельный
+воспроизводимый баг платформы: задача #2275 (Imperal Cloud tracker).
+После этого: `deploy_app` (20/21, commit 9ed5619d) → `submit_for_review`
+→ статус `pending_review`.
+
 ## 2026-08-21 — первичный прайсинг (per_action, revenue_split_dev=95)
 
 Применено через `developer.update_pricing` (pricing_config как настоящий
